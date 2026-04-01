@@ -1,0 +1,77 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="en"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>ProductController.java</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">E-Commerce Backend</a> &gt; <a href="index.source.html" class="el_package">com.ecommerce.controller</a> &gt; <span class="el_source">ProductController.java</span></div><h1>ProductController.java</h1><pre class="source lang-java linenums">package com.ecommerce.controller;
+
+import com.ecommerce.dto.request.ProductRequest;
+import com.ecommerce.dto.response.ApiResponse;
+import com.ecommerce.dto.response.PageResponse;
+import com.ecommerce.dto.response.ProductResponse;
+import com.ecommerce.service.ProductService;
+import jakarta.validation.Valid;
+import lombok.RequiredArgsConstructor;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.*;
+
+import java.math.BigDecimal;
+
+@RestController
+@RequestMapping(&quot;/api/products&quot;)
+@RequiredArgsConstructor
+public class ProductController {
+
+    private final ProductService productService;
+
+    @GetMapping
+    public ResponseEntity&lt;PageResponse&lt;ProductResponse&gt;&gt; getAllProducts(
+            @RequestParam(defaultValue = &quot;0&quot;) int page,
+            @RequestParam(defaultValue = &quot;20&quot;) int size,
+            @RequestParam(defaultValue = &quot;createdAt&quot;) String sortBy,
+            @RequestParam(defaultValue = &quot;desc&quot;) String sortDir) {
+
+<span class="nc" id="L30">        PageResponse&lt;ProductResponse&gt; response = productService.getAllProducts(page, size, sortBy, sortDir);</span>
+<span class="nc" id="L31">        return ResponseEntity.ok(response);</span>
+    }
+
+    @GetMapping(&quot;/search&quot;)
+    public ResponseEntity&lt;PageResponse&lt;ProductResponse&gt;&gt; searchProducts(
+            @RequestParam(required = false) Long categoryId,
+            @RequestParam(required = false) BigDecimal minPrice,
+            @RequestParam(required = false) BigDecimal maxPrice,
+            @RequestParam(required = false) String searchTerm,
+            @RequestParam(defaultValue = &quot;0&quot;) int page,
+            @RequestParam(defaultValue = &quot;20&quot;) int size,
+            @RequestParam(defaultValue = &quot;createdAt&quot;) String sortBy,
+            @RequestParam(defaultValue = &quot;desc&quot;) String sortDir) {
+
+<span class="nc" id="L45">        PageResponse&lt;ProductResponse&gt; response = productService.searchProducts(</span>
+                categoryId, minPrice, maxPrice, searchTerm, page, size, sortBy, sortDir);
+<span class="nc" id="L47">        return ResponseEntity.ok(response);</span>
+    }
+
+    @GetMapping(&quot;/{id}&quot;)
+    public ResponseEntity&lt;ProductResponse&gt; getProductById(@PathVariable Long id) {
+<span class="nc" id="L52">        ProductResponse response = productService.getProductById(id);</span>
+<span class="nc" id="L53">        return ResponseEntity.ok(response);</span>
+    }
+
+    @PostMapping
+    public ResponseEntity&lt;ProductResponse&gt; createProduct(@Valid @RequestBody ProductRequest request) {
+<span class="nc" id="L58">        ProductResponse response = productService.createProduct(request);</span>
+<span class="nc" id="L59">        return ResponseEntity.status(HttpStatus.CREATED).body(response);</span>
+    }
+
+    @PutMapping(&quot;/{id}&quot;)
+    public ResponseEntity&lt;ProductResponse&gt; updateProduct(
+            @PathVariable Long id,
+            @Valid @RequestBody ProductRequest request) {
+
+<span class="nc" id="L67">        ProductResponse response = productService.updateProduct(id, request);</span>
+<span class="nc" id="L68">        return ResponseEntity.ok(response);</span>
+    }
+
+    @DeleteMapping(&quot;/{id}&quot;)
+    public ResponseEntity&lt;ApiResponse&gt; deleteProduct(@PathVariable Long id) {
+<span class="nc" id="L73">        productService.deleteProduct(id);</span>
+<span class="nc" id="L74">        return ResponseEntity.ok(new ApiResponse(true, &quot;Product deleted successfully&quot;));</span>
+    }
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.13.202504020838</span></div></body></html>

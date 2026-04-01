@@ -1,0 +1,52 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="en"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>CartController.java</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">E-Commerce Backend</a> &gt; <a href="index.source.html" class="el_package">com.ecommerce.controller</a> &gt; <span class="el_source">CartController.java</span></div><h1>CartController.java</h1><pre class="source lang-java linenums">package com.ecommerce.controller;
+
+import com.ecommerce.dto.request.CartItemRequest;
+import com.ecommerce.dto.response.ApiResponse;
+import com.ecommerce.model.Cart;
+import com.ecommerce.service.CartService;
+import jakarta.validation.Valid;
+import lombok.RequiredArgsConstructor;
+import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.*;
+
+@RestController
+@RequestMapping(&quot;/api/cart&quot;)
+@RequiredArgsConstructor
+public class CartController {
+
+    private final CartService cartService;
+
+    @GetMapping
+    public ResponseEntity&lt;Cart&gt; getCart() {
+<span class="nc" id="L21">        Cart cart = cartService.getCart();</span>
+<span class="nc" id="L22">        return ResponseEntity.ok(cart);</span>
+    }
+
+    @PostMapping(&quot;/items&quot;)
+    public ResponseEntity&lt;Cart&gt; addItemToCart(@Valid @RequestBody CartItemRequest request) {
+<span class="nc" id="L27">        Cart cart = cartService.addItemToCart(request);</span>
+<span class="nc" id="L28">        return ResponseEntity.ok(cart);</span>
+    }
+
+    @PutMapping(&quot;/items/{productId}&quot;)
+    public ResponseEntity&lt;Cart&gt; updateCartItem(
+            @PathVariable Long productId,
+            @RequestParam Integer quantity) {
+
+<span class="nc" id="L36">        Cart cart = cartService.updateCartItem(productId, quantity);</span>
+<span class="nc" id="L37">        return ResponseEntity.ok(cart);</span>
+    }
+
+    @DeleteMapping(&quot;/items/{productId}&quot;)
+    public ResponseEntity&lt;ApiResponse&gt; removeItemFromCart(@PathVariable Long productId) {
+<span class="nc" id="L42">        cartService.removeItemFromCart(productId);</span>
+<span class="nc" id="L43">        return ResponseEntity.ok(new ApiResponse(true, &quot;Item removed from cart&quot;));</span>
+    }
+
+    @DeleteMapping
+    public ResponseEntity&lt;ApiResponse&gt; clearCart() {
+<span class="nc" id="L48">        cartService.clearCart();</span>
+<span class="nc" id="L49">        return ResponseEntity.ok(new ApiResponse(true, &quot;Cart cleared successfully&quot;));</span>
+    }
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.13.202504020838</span></div></body></html>
