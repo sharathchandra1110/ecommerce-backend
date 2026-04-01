@@ -1,0 +1,123 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="en"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>CartService.java</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">E-Commerce Backend</a> &gt; <a href="index.source.html" class="el_package">com.ecommerce.service</a> &gt; <span class="el_source">CartService.java</span></div><h1>CartService.java</h1><pre class="source lang-java linenums">package com.ecommerce.service;
+
+import com.ecommerce.dto.request.CartItemRequest;
+import com.ecommerce.exception.ResourceNotFoundException;
+import com.ecommerce.model.Cart;
+import com.ecommerce.model.CartItem;
+import com.ecommerce.model.Product;
+import com.ecommerce.model.User;
+import com.ecommerce.repository.CartItemRepository;
+import com.ecommerce.repository.CartRepository;
+import com.ecommerce.repository.ProductRepository;
+import com.ecommerce.repository.UserRepository;
+import lombok.RequiredArgsConstructor;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.context.SecurityContextHolder;
+import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
+
+@Service
+@RequiredArgsConstructor
+public class CartService {
+
+    private final CartRepository cartRepository;
+    private final CartItemRepository cartItemRepository;
+    private final ProductRepository productRepository;
+    private final UserRepository userRepository;
+
+    @Transactional(readOnly = true)
+    public Cart getCart() {
+<span class="fc" id="L30">        User user = getCurrentUser();</span>
+<span class="fc" id="L31">        return cartRepository.findByUserIdWithItems(user.getId())</span>
+<span class="fc" id="L32">                .orElseGet(() -&gt; createCart(user));</span>
+    }
+
+    @Transactional
+    public Cart addItemToCart(CartItemRequest request) {
+<span class="fc" id="L37">        User user = getCurrentUser();</span>
+<span class="fc" id="L38">        Cart cart = cartRepository.findByUserId(user.getId())</span>
+<span class="pc" id="L39">                .orElseGet(() -&gt; createCart(user));</span>
+
+<span class="fc" id="L41">        Product product = productRepository.findById(request.getProductId())</span>
+<span class="pc" id="L42">                .orElseThrow(() -&gt; new ResourceNotFoundException(&quot;Product not found&quot;));</span>
+
+<span class="fc bfc" id="L44" title="All 2 branches covered.">        if (product.getStockQuantity() &lt; request.getQuantity()) {</span>
+<span class="fc" id="L45">            throw new RuntimeException(&quot;Insufficient stock&quot;);</span>
+        }
+
+<span class="fc" id="L48">        CartItem existingItem = cartItemRepository</span>
+<span class="fc" id="L49">                .findByCartIdAndProductId(cart.getId(), product.getId())</span>
+<span class="fc" id="L50">                .orElse(null);</span>
+
+<span class="pc bpc" id="L52" title="1 of 2 branches missed.">        if (existingItem != null) {</span>
+<span class="nc" id="L53">            existingItem.setQuantity(existingItem.getQuantity() + request.getQuantity());</span>
+<span class="nc" id="L54">            cartItemRepository.save(existingItem);</span>
+        } else {
+<span class="fc" id="L56">            CartItem newItem = CartItem.builder()</span>
+<span class="fc" id="L57">                    .cart(cart)</span>
+<span class="fc" id="L58">                    .product(product)</span>
+<span class="fc" id="L59">                    .quantity(request.getQuantity())</span>
+<span class="fc" id="L60">                    .build();</span>
+<span class="fc" id="L61">            cart.addItem(newItem);</span>
+<span class="fc" id="L62">            cartItemRepository.save(newItem);</span>
+        }
+
+<span class="fc" id="L65">        return cartRepository.save(cart);</span>
+    }
+
+    @Transactional
+    public Cart updateCartItem(Long productId, Integer quantity) {
+<span class="nc" id="L70">        User user = getCurrentUser();</span>
+<span class="nc" id="L71">        Cart cart = cartRepository.findByUserId(user.getId())</span>
+<span class="nc" id="L72">                .orElseThrow(() -&gt; new ResourceNotFoundException(&quot;Cart not found&quot;));</span>
+
+<span class="nc" id="L74">        CartItem cartItem = cartItemRepository.findByCartIdAndProductId(cart.getId(), productId)</span>
+<span class="nc" id="L75">                .orElseThrow(() -&gt; new ResourceNotFoundException(&quot;Cart item not found&quot;));</span>
+
+<span class="nc bnc" id="L77" title="All 2 branches missed.">        if (quantity &lt;= 0) {</span>
+<span class="nc" id="L78">            cart.removeItem(cartItem);</span>
+<span class="nc" id="L79">            cartItemRepository.delete(cartItem);</span>
+        } else {
+<span class="nc bnc" id="L81" title="All 2 branches missed.">            if (cartItem.getProduct().getStockQuantity() &lt; quantity) {</span>
+<span class="nc" id="L82">                throw new RuntimeException(&quot;Insufficient stock&quot;);</span>
+            }
+<span class="nc" id="L84">            cartItem.setQuantity(quantity);</span>
+<span class="nc" id="L85">            cartItemRepository.save(cartItem);</span>
+        }
+
+<span class="nc" id="L88">        return cartRepository.save(cart);</span>
+    }
+
+    @Transactional
+    public void removeItemFromCart(Long productId) {
+<span class="fc" id="L93">        User user = getCurrentUser();</span>
+<span class="fc" id="L94">        Cart cart = cartRepository.findByUserId(user.getId())</span>
+<span class="pc" id="L95">                .orElseThrow(() -&gt; new ResourceNotFoundException(&quot;Cart not found&quot;));</span>
+
+<span class="fc" id="L97">        cartItemRepository.deleteByCartIdAndProductId(cart.getId(), productId);</span>
+<span class="fc" id="L98">    }</span>
+
+    @Transactional
+    public void clearCart() {
+<span class="nc" id="L102">        User user = getCurrentUser();</span>
+<span class="nc" id="L103">        Cart cart = cartRepository.findByUserId(user.getId())</span>
+<span class="nc" id="L104">                .orElseThrow(() -&gt; new ResourceNotFoundException(&quot;Cart not found&quot;));</span>
+
+<span class="nc" id="L106">        cart.getItems().clear();</span>
+<span class="nc" id="L107">        cartRepository.save(cart);</span>
+<span class="nc" id="L108">    }</span>
+
+    private Cart createCart(User user) {
+<span class="fc" id="L111">        Cart cart = Cart.builder()</span>
+<span class="fc" id="L112">                .user(user)</span>
+<span class="fc" id="L113">                .build();</span>
+<span class="fc" id="L114">        return cartRepository.save(cart);</span>
+    }
+
+    private User getCurrentUser() {
+<span class="fc" id="L118">        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();</span>
+<span class="fc" id="L119">        return userRepository.findByUsername(authentication.getName())</span>
+<span class="pc" id="L120">                .orElseThrow(() -&gt; new ResourceNotFoundException(&quot;User not found&quot;));</span>
+    }
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.13.202504020838</span></div></body></html>

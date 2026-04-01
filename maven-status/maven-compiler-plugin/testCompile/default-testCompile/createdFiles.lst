@@ -1,0 +1,4 @@
+com/ecommerce/EcommerceBackendApplicationTests.class
+com/ecommerce/service/ProductServiceTest.class
+com/ecommerce/service/OrderServiceTest.class
+com/ecommerce/service/CartServiceTest.class

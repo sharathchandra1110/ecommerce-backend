@@ -1,0 +1,26 @@
+GROUP,PACKAGE,CLASS,INSTRUCTION_MISSED,INSTRUCTION_COVERED,BRANCH_MISSED,BRANCH_COVERED,LINE_MISSED,LINE_COVERED,COMPLEXITY_MISSED,COMPLEXITY_COVERED,METHOD_MISSED,METHOD_COVERED
+E-Commerce Backend,com.ecommerce.model,Order,0,9,0,0,0,3,0,1,0,1
+E-Commerce Backend,com.ecommerce.model,Cart,9,9,0,0,3,3,1,1,1,1
+E-Commerce Backend,com.ecommerce.model,Role,0,21,0,0,0,4,0,1,0,1
+E-Commerce Backend,com.ecommerce.model,Order.OrderStatus,0,33,0,0,0,2,0,1,0,1
+E-Commerce Backend,com.ecommerce.security,JwtTokenProvider,62,3,0,0,23,1,4,1,4,1
+E-Commerce Backend,com.ecommerce.security,UserDetailsServiceImpl,37,0,0,0,7,0,2,0,2,0
+E-Commerce Backend,com.ecommerce.security,JwtAuthenticationFilter,69,0,8,0,17,0,6,0,2,0
+E-Commerce Backend,com.ecommerce.exception,GlobalExceptionHandler,91,3,0,0,17,1,7,1,7,1
+E-Commerce Backend,com.ecommerce.exception,UnauthorizedException,4,0,0,0,2,0,1,0,1,0
+E-Commerce Backend,com.ecommerce.exception,ResourceNotFoundException,0,4,0,0,0,2,0,1,0,1
+E-Commerce Backend,com.ecommerce,EcommerceApplication,5,3,0,0,2,1,1,1,1,1
+E-Commerce Backend,com.ecommerce.service,ProductService,250,131,15,3,41,38,20,5,11,5
+E-Commerce Backend,com.ecommerce.service,OrderService,100,217,1,11,18,53,9,9,8,4
+E-Commerce Backend,com.ecommerce.service,CartService,130,132,5,3,21,34,12,7,9,6
+E-Commerce Backend,com.ecommerce.service,UserService,32,0,0,0,5,0,4,0,4,0
+E-Commerce Backend,com.ecommerce.service,AuthService,122,0,4,0,28,0,5,0,3,0
+E-Commerce Backend,com.ecommerce.dto.response,JwtResponse,21,0,0,0,8,0,1,0,1,0
+E-Commerce Backend,com.ecommerce.controller,CartController,47,0,0,0,10,0,5,0,5,0
+E-Commerce Backend,com.ecommerce.controller,OrderController,48,0,0,0,10,0,5,0,5,0
+E-Commerce Backend,com.ecommerce.controller,ProductController,65,0,0,0,12,0,6,0,6,0
+E-Commerce Backend,com.ecommerce.controller,UserController,15,0,0,0,4,0,2,0,2,0
+E-Commerce Backend,com.ecommerce.controller,AuthController,16,0,0,0,4,0,2,0,2,0
+E-Commerce Backend,com.ecommerce.util,Constants,3,0,0,0,1,0,1,0,1,0
+E-Commerce Backend,com.ecommerce.config,JwtConfig,3,0,0,0,1,0,1,0,1,0
+E-Commerce Backend,com.ecommerce.config,SecurityConfig,0,196,0,0,0,23,0,7,0,7
